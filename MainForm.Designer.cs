@@ -46,6 +46,7 @@
             this.btnBatchPrint = new System.Windows.Forms.Button();
             this.btnOpenFile = new System.Windows.Forms.Button();
             this.cbPrinters = new System.Windows.Forms.ComboBox();
+            this.btnPageSetting = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBarCode)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -96,6 +97,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnPageSetting);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
@@ -223,6 +225,16 @@
             this.cbPrinters.Size = new System.Drawing.Size(285, 20);
             this.cbPrinters.TabIndex = 5;
             // 
+            // btnPageSetting
+            // 
+            this.btnPageSetting.Location = new System.Drawing.Point(171, 21);
+            this.btnPageSetting.Name = "btnPageSetting";
+            this.btnPageSetting.Size = new System.Drawing.Size(75, 23);
+            this.btnPageSetting.TabIndex = 15;
+            this.btnPageSetting.Text = "页面设置";
+            this.btnPageSetting.UseVisualStyleBackColor = true;
+            this.btnPageSetting.Click += new System.EventHandler(this.btnPageSetting_Click);
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -265,6 +277,7 @@
         private System.Windows.Forms.TextBox tbBarCodeSpacing;
         private System.Windows.Forms.TextBox tbBarcodeHeight;
         private System.Windows.Forms.TextBox tbBarCodeWidth;
+        private System.Windows.Forms.Button btnPageSetting;
     }
 }
 

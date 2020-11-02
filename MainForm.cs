@@ -17,12 +17,13 @@ namespace 条码打印器
         int barCodeHeight = 100;
         int barCodeSpacing = 50;
         int fontSize = 14;
-        #endregion        
+        #endregion
+        PrintDocument batchPrintDocument = new PrintDocument();
 
         public mainForm()
         {
             InitializeComponent();
-            CustomInit();            
+            CustomInit();
         }
 
         private void CustomInit()
@@ -36,6 +37,7 @@ namespace 条码打印器
             cbPrinters.SelectedItem = print.PrinterSettings.PrinterName;
             print.Dispose();
             #endregion
+            batchPrintDocument.PrintPage += BatchPrint;
         }
 
         private void btnGenerate_Click(object sender, EventArgs e)
@@ -57,7 +59,6 @@ namespace 条码打印器
                 try
                 {
                     pd.PrintPage += singlePrint;
-                    pd.PrinterSettings = pdSetting.PrinterSettings;
                     pd.PrinterSettings.PrinterName = cbPrinters.SelectedItem.ToString();
                     PageSetupDialog pageSetupDialog = new PageSetupDialog();
                     pageSetupDialog.Document = pd;
@@ -157,27 +158,26 @@ namespace 条码打印器
                 {
                     barCodeImages.Add(ObjectOperator.CreateBarCode(s, barCodeWidth, barCodeHeight, true));
                 }
-                PrintDocument batchPrintDocument = new PrintDocument();
+                //PrintDocument batchPrintDocument = new PrintDocument();
                 try
                 {
-
                     batchPrintDocument.PrinterSettings.PrinterName = cbPrinters.SelectedItem.ToString();
-                    PageSetupDialog pageSetupDialog = new PageSetupDialog();
-                    pageSetupDialog.Document = batchPrintDocument;
-                    if (DialogResult.OK == pageSetupDialog.ShowDialog())
-                    {
-                        batchPrintDocument.PrintPage += BatchPrint;
-                        PrintPreviewDialog ppd = new PrintPreviewDialog();
-                        ppd.Document = batchPrintDocument;
-                        ppd.ShowDialog();
-                    }
+                    //PageSetupDialog pageSetupDialog = new PageSetupDialog();
+                    //pageSetupDialog.Document = batchPrintDocument;
+                    //if (DialogResult.OK == pageSetupDialog.ShowDialog())
+                    //{
+                    //batchPrintDocument.PrintPage += BatchPrint;
+                    PrintPreviewDialog ppd = new PrintPreviewDialog();
+                    ppd.Document = batchPrintDocument;
+                    ppd.ShowDialog();
+                    //}
                 }
                 catch (Exception ePrint)
                 {
                     MessageBox.Show($"打印失败：\r\n{ePrint})", "打印失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                finally
-                { batchPrintDocument.Dispose(); }
+                //finally
+                //{ batchPrintDocument.Dispose(); }
             }
             else
             { MessageBox.Show("无可打印数据"); }
@@ -232,7 +232,6 @@ namespace 条码打印器
 
                                 int offset = ((sectionWidth - strWidth) / 2);
                                 int x1 = x + j * sectionWidth, y1 = y + i * (sectionHeight + strHeight + barCodeSpacing);
-
                                 ea.Graphics.DrawImage(barCodeImages[printCounter], x1, y1);
                                 ea.Graphics.DrawString(labelString, printFont, Brushes.Black, x1 + offset, y1 + sectionHeight);
                                 pagePrinterCounter++;
@@ -269,6 +268,19 @@ namespace 条码打印器
             }
         }
 
+        private void btnPageSetting_Click(object sender, EventArgs e)
+        {
+            PageSetupDialog psd = new PageSetupDialog();
+            psd.Document = batchPrintDocument;
+            psd.AllowPrinter = true;
+            psd.ShowDialog();
+            #region 修复.Net Pagesetup的Bug，把百万分之一英寸改为十分之一毫米
+            psd.PageSettings.Margins.Top = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Top, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
+            psd.PageSettings.Margins.Bottom = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Bottom, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
+            psd.PageSettings.Margins.Left = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Left, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
+            psd.PageSettings.Margins.Right = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Right, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
+            #endregion
+        }
     }
 }
 
