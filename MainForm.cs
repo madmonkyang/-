@@ -170,6 +170,8 @@ namespace 条码打印器
                     PrintPreviewDialog ppd = new PrintPreviewDialog();
                     ppd.Document = batchPrintDocument;
                     ppd.ShowDialog();
+
+
                     //}
                 }
                 catch (Exception ePrint)
@@ -232,6 +234,7 @@ namespace 条码打印器
 
                                 int offset = ((sectionWidth - strWidth) / 2);
                                 int x1 = x + j * sectionWidth, y1 = y + i * (sectionHeight + strHeight + barCodeSpacing);
+                                labelString = lbBarCodes.Items[printCounter].ToString();
                                 ea.Graphics.DrawImage(barCodeImages[printCounter], x1, y1);
                                 ea.Graphics.DrawString(labelString, printFont, Brushes.Black, x1 + offset, y1 + sectionHeight);
                                 pagePrinterCounter++;
@@ -273,13 +276,15 @@ namespace 条码打印器
             PageSetupDialog psd = new PageSetupDialog();
             psd.Document = batchPrintDocument;
             psd.AllowPrinter = true;
-            psd.ShowDialog();
-            #region 修复.Net Pagesetup的Bug，把百万分之一英寸改为十分之一毫米
-            psd.PageSettings.Margins.Top = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Top, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
-            psd.PageSettings.Margins.Bottom = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Bottom, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
-            psd.PageSettings.Margins.Left = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Left, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
-            psd.PageSettings.Margins.Right = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Right, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
-            #endregion
+            if (DialogResult.OK == psd.ShowDialog())
+            {
+                #region 修复.Net Pagesetup的Bug，把百万分之一英寸改为十分之一毫米
+                psd.PageSettings.Margins.Top = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Top, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
+                psd.PageSettings.Margins.Bottom = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Bottom, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
+                psd.PageSettings.Margins.Left = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Left, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
+                psd.PageSettings.Margins.Right = PrinterUnitConvert.Convert(psd.PageSettings.Margins.Right, PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter);
+                #endregion
+            }
         }
     }
 }
